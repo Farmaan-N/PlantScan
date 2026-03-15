@@ -1,0 +1,312 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ──────────────────────────────────────────────────────────
+   PlantScan Premium Design System
+   Modern Dark Botanical Theme
+────────────────────────────────────────────────────────── */
+
+:root {
+  /* Brand Palette */
+  --brand-50: #f7fee7;
+  --brand-100: #ecfccb;
+  --brand-200: #d9f99d;
+  --brand-300: #bef264;
+  --brand-400: #a3e635;
+  --brand-500: #84cc16; /* Main Accent */
+  --brand-600: #65a30d;
+  --brand-700: #4d7c0f;
+  
+  /* Neutral Palette */
+  --slate-50: #f8fafc;
+  --slate-900: #0f172a;
+  --slate-950: #020617; /* Base BG */
+  
+  /* Semantic Colors */
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --text-tertiary: #64748b;
+  
+  /* Glass Effects */
+  --glass-bg: rgba(15, 23, 42, 0.65);
+  --glass-border: rgba(255, 255, 255, 0.08);
+  --glass-shine: rgba(255, 255, 255, 0.05);
+
+  /* Shadows */
+  --shadow-premium: 0 20px 50px -12px rgba(0, 0, 0, 0.5);
+  
+  /* Gradations */
+  --grad-premium: linear-gradient(135deg, #a3e635 0%, #65a30d 100%);
+  --grad-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0.01) 100%);
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+    background-color: var(--slate-950);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: 'Space Grotesk', sans-serif;
+    letter-spacing: -0.03em;
+    font-weight: 700;
+  }
+
+  code, pre {
+    font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* Custom Scrollbar */
+  ::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: var(--slate-950);
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: rgba(132, 204, 22, 0.2);
+    border-radius: 10px;
+    border: 2px solid var(--slate-950);
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+}
+
+@layer components {
+  /* Premium Glass Container */
+  .glass-card {
+    @apply relative overflow-hidden backdrop-blur-xl transition-all duration-500;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0.01) 100%);
+    border: 1px solid var(--glass-border);
+    box-shadow: var(--shadow-premium);
+  }
+
+  .glass-card::before {
+    content: '';
+    @apply absolute inset-0 pointer-events-none;
+    background: linear-gradient(135deg, var(--glass-shine) 0%, transparent 50%, var(--glass-shine) 100%);
+    opacity: 0.5;
+  }
+
+  .glass-card-hover {
+    @apply border-transparent;
+    transition: all 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .glass-card-hover:hover {
+    transform: translateY(-12px) scale(1.03);
+    border-color: rgba(255, 255, 255, 0.2);
+    box-shadow: 0 30px 60px -12px rgba(0, 0, 0, 0.6);
+  }
+
+  /* Unique Hover Glint */
+  .glass-card-hover::after {
+    content: '';
+    @apply absolute inset-0 pointer-events-none opacity-0 transition-opacity duration-700;
+    background: radial-gradient(
+      800px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), 
+      rgba(255, 255, 255, 0.05), 
+      transparent 40%
+    );
+    z-index: 1;
+  }
+
+  .glass-card-hover:hover::after {
+    @apply opacity-100;
+  }
+
+  /* Buttons */
+  .btn-premium {
+    @apply relative inline-flex items-center justify-center gap-2 px-6 py-3 font-semibold rounded-full overflow-hidden transition-all duration-300;
+    background: linear-gradient(135deg, var(--brand-400) 0%, var(--brand-600) 100%);
+    color: var(--slate-950);
+  }
+
+  .btn-premium:hover {
+    @apply -translate-y-0.5 shadow-xl;
+  }
+
+  .btn-premium:active {
+    @apply translate-y-0 scale-95;
+  }
+
+  .btn-premium-outline {
+    @apply relative inline-flex items-center justify-center gap-2 px-6 py-3 font-semibold rounded-full border border-white/10 backdrop-blur-md transition-all duration-300;
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-primary);
+  }
+
+  .btn-premium-outline:hover {
+    @apply border-white/20 bg-white/5 -translate-y-0.5;
+  }
+
+  /* Premium Shimmer Effect */
+  .shimmer {
+    @apply relative overflow-hidden;
+  }
+
+  .shimmer::after {
+    content: '';
+    @apply absolute inset-0 -translate-x-full;
+    background: linear-gradient(
+      90deg,
+      transparent,
+      rgba(255, 255, 255, 0.05),
+      transparent
+    );
+    animation: shimmer 2s infinite;
+  }
+
+  @keyframes shimmer {
+    100% { transform: translateX(100%); }
+  }
+
+  /* Magnetic Anchor */
+  .magnetic-fix {
+    @apply transition-transform duration-300 ease-out;
+  }
+
+  /* Inputs */
+  .input-premium {
+    @apply w-full px-4 py-3 bg-white/5 border border-white/10 rounded-xl text-white placeholder-slate-500 transition-all duration-300 outline-none;
+  }
+
+  .input-premium:focus {
+    @apply border-white/20 bg-white/10 ring-4 ring-white/5;
+  }
+
+  /* Unique Shapes for Cards */
+  .shape-blob-1 {
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%;
+  }
+  
+  .shape-blob-2 {
+    border-radius: 60% 40% 30% 70% / 60% 30% 70% 40%;
+  }
+
+  .shape-blob-3 {
+    border-radius: 50% 50% 30% 70% / 50% 60% 40% 50%;
+  }
+
+  .shape-blob-4 {
+    border-radius: 70% 30% 50% 50% / 30% 30% 70% 70%;
+  }
+
+  .shape-leaf {
+    border-radius: 0 100% 0 100%;
+  }
+
+  .shape-cut {
+    clip-path: polygon(0 0, 100% 0, 100% 85%, 85% 100%, 0 100%);
+  }
+
+  /* Decorative Patterns */
+  .bg-dots {
+    background-image: radial-gradient(rgba(255, 255, 255, 0.1) 1px, transparent 1px);
+    background-size: 20px 20px;
+  }
+
+  .bg-grid-subtle {
+    background-image: linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+                      linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+    background-size: 30px 30px;
+  }
+}
+
+/* ── Custom Utilities ───────────────────────────────────────── */
+
+.text-gradient {
+  @apply bg-clip-text text-transparent bg-gradient-to-r from-white via-white to-lime-500;
+}
+
+.bg-mesh {
+  background-color: var(--slate-950);
+  background-image: 
+    radial-gradient(at 0% 0%, rgba(255, 255, 255, 0.03) 0px, transparent 50%),
+    radial-gradient(at 100% 0%, rgba(255, 255, 255, 0.02) 0px, transparent 50%),
+    radial-gradient(at 50% 100%, rgba(255, 255, 255, 0.01) 0px, transparent 50%);
+}
+
+.noise {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  opacity: 0.03;
+  z-index: 9999;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3BaseFilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/baseFilter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+}
+
+/* ──────────────────────────────────────────────────────────
+   Animations
+────────────────────────────────────────────────────────── */
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.reveal-text {
+  mask-image: linear-gradient(to right, white, white, transparent);
+  mask-size: 200% 100%;
+  animation: reveal 1s ease forwards;
+}
+
+@keyframes reveal {
+  from { mask-position: 100% 0; }
+  to { mask-position: 0% 0; }
+}
+
+/* Orb Backgrounds */
+.orb {
+  @apply absolute rounded-full blur-[120px] pointer-events-none opacity-20;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.05) 0%, transparent 70%);
+}
+
+.orb-primary { width: 500px; height: 500px; top: -10%; right: -5%; }
+.orb-secondary { width: 400px; height: 400px; bottom: -5%; left: -5%; background: radial-gradient(circle, rgba(255, 255, 255, 0.03) 0%, transparent 70%); }
+
+/* Smooth Section Reveal */
+.section-reveal {
+  @apply opacity-0 translate-y-8;
+  animation: sectionReveal 1s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+@keyframes sectionReveal {
+  to { @apply opacity-100 translate-y-0; }
+}
+
+
+.spotlight-bg {
+  background: radial-gradient(
+    600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%),
+    rgba(255, 255, 255, 0.04),
+    transparent 40%
+  );
+}
