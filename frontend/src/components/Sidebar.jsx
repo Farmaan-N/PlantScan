@@ -95,7 +95,7 @@ function Sidebar() {
           >
             <div className="text-right hidden lg:block">
               <p className="text-[10px] font-black text-white uppercase tracking-wider leading-none group-hover:text-lime-400 transition-colors whitespace-nowrap">
-                {user?.email?.split('@')[0] || 'User'}
+                {user?.user_metadata?.username || user?.email?.split('@')[0] || 'User'}
               </p>
               <p className="text-[8px] font-bold text-slate-500 uppercase tracking-widest mt-1">Botanist</p>
             </div>

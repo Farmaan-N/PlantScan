@@ -108,8 +108,8 @@ function AuthPage() {
         
         {/* LOGIN FORM */}
         <div className={`
-          relative sm:absolute left-0 top-0 w-full sm:w-1/2 min-h-[500px] sm:h-full flex flex-col justify-center px-6 sm:px-12 py-10 transition-all duration-700 ease-in-out
-          ${isLogin ? 'opacity-100 z-20 translate-x-0' : 'opacity-0 z-10 sm:translate-x-[-20%] invisible sm:visible'}
+          absolute left-0 top-0 w-full sm:w-1/2 h-full flex flex-col justify-center px-6 sm:px-12 py-10 transition-all duration-700 ease-in-out
+          ${isLogin ? 'opacity-100 z-20 translate-x-0 pointer-events-auto' : 'opacity-0 z-10 sm:translate-x-[-20%] pointer-events-none'}
         `}>
           <div className="space-y-6 max-w-sm mx-auto w-full pt-4">
             <div className="space-y-2">
@@ -173,8 +173,8 @@ function AuthPage() {
 
         {/* SIGNUP FORM */}
         <div className={`
-          relative sm:absolute right-0 top-0 w-full sm:w-1/2 min-h-[550px] sm:h-full flex flex-col justify-center px-6 sm:px-12 py-10 transition-all duration-700 ease-in-out
-          ${!isLogin ? 'opacity-100 z-20 translate-x-0' : 'opacity-0 z-10 sm:translate-x-[20%] invisible sm:visible'}
+          absolute right-0 top-0 w-full sm:w-1/2 h-full flex flex-col justify-center px-6 sm:px-12 py-10 transition-all duration-700 ease-in-out
+          ${!isLogin ? 'opacity-100 z-20 translate-x-0 pointer-events-auto' : 'opacity-0 z-10 sm:translate-x-[20%] pointer-events-none'}
         `}>
           <div className="space-y-6 max-w-sm mx-auto w-full pt-4">
             {success ? (
@@ -191,10 +191,10 @@ function AuthPage() {
             ) : (
               <>
                 <div className="space-y-2">
-                  <div className="flex items-center gap-2 text-emerald-400 font-black uppercase tracking-[0.2em] text-[10px]">
+                  <div className="flex items-center gap-2 text-lime-400 font-black uppercase tracking-[0.2em] text-[10px]">
                     <Sparkles size={12} /> START EXPLORING
                   </div>
-                  <h2 className="text-3xl sm:text-4xl font-black tracking-tighter uppercase text-white leading-none">CREATE <br /><span className="text-emerald-500">ACCOUNT</span></h2>
+                  <h2 className="text-3xl sm:text-4xl font-black tracking-tighter uppercase text-white leading-none">CREATE <br /><span className="text-lime-500">ACCOUNT</span></h2>
                   <p className="text-slate-500 text-sm font-medium mt-1">Join us to identify plants instantly.</p>
                 </div>
 
@@ -208,7 +208,7 @@ function AuthPage() {
                   <div className="space-y-1.5">
                     <label className="text-[9px] font-black text-slate-500 uppercase tracking-widest ml-1">Email Address</label>
                     <div className="relative group">
-                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-emerald-500 transition-colors" size={16} />
+                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-600 group-focus-within:text-lime-500 transition-colors" size={16} />
                       <input 
                         type="email" 
                         value={email} 
@@ -245,14 +245,14 @@ function AuthPage() {
                     </div>
                   </div>
 
-                  <Button type="submit" fullWidth disabled={loading} className="!py-3.5 tracking-[0.2em] font-black !rounded-xl !bg-emerald-600 shadow-xl shadow-emerald-500/10 mt-2">
+                  <Button type="submit" fullWidth disabled={loading} className="!py-3.5 tracking-[0.2em] font-black !rounded-xl shadow-xl shadow-lime-500/10 mt-2">
                     {loading ? <div className="w-5 h-5 border-2 border-slate-950/30 border-t-slate-950 rounded-full animate-spin" /> : <>SIGN UP <UserPlus size={16} /></>}
                   </Button>
 
                   <div className="sm:hidden text-center pt-4">
                     <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">
                       ALREADY HAVE AN ACCOUNT? {' '}
-                      <button type="button" onClick={toggleMode} className="text-white hover:text-emerald-400 underline underline-offset-4 decoration-emerald-500/50">SIGN IN NOW</button>
+                      <button type="button" onClick={toggleMode} className="text-white hover:text-lime-400 underline underline-offset-4 decoration-lime-500/50">SIGN IN NOW</button>
                     </p>
                   </div>
                 </form>

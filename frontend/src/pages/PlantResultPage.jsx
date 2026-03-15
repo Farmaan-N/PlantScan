@@ -86,12 +86,12 @@ function PlantResultPage() {
         <PlantInfoCard data={plantData} />
       </motion.div>
 
-      {/* Post-Analysis Protocol Footer */}
+      {/* Post-Analysis Footer */}
       <section className="pt-16 mt-20 border-t border-white/5">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-12 items-center">
            <div className="space-y-2">
-              <h4 className="text-2xl font-black uppercase tracking-tighter text-white">Botanical Protocol Concluded</h4>
-              <p className="text-slate-500 text-sm font-medium">This specimen record has been securely stored in your local encrypted archive. Monitoring active.</p>
+              <h4 className="text-2xl font-black uppercase tracking-tighter text-white">Plant Saved</h4>
+              <p className="text-slate-500 text-sm font-medium">This plant has been saved to your history collection.</p>
            </div>
            <div className="flex flex-wrap gap-4 md:justify-end">
               <Button variant="secondary" onClick={() => navigate('/scan')} className="px-10 h-14 !rounded-2xl border-white/5">

@@ -33,7 +33,11 @@ const identifyPlantHandler = async (req, res, next) => {
     // ── Step 2: Generate plant info with LLM ─────────────────────────────────
     console.log('🤖 Generating plant information with LLM...');
     const plantInfo = await generatePlantInfo(identification.plantName, identification.scientificName);
-    console.log('✅ Plant information generated');
+    console.log('✅ Plant information generated:', {
+      hindi: plantInfo.hindiName,
+      tamil: plantInfo.tamilName,
+      english: plantInfo.indianEnglishName
+    });
 
     // ── Step 3: Compile the full response ────────────────────────────────────
     const fullPlantData = {
@@ -43,6 +47,9 @@ const identifyPlantHandler = async (req, res, next) => {
       commonNames: identification.commonNames,
       family: identification.family,
       description: plantInfo.description,
+      indianEnglishName: plantInfo.indianEnglishName,
+      hindiName: plantInfo.hindiName,
+      tamilName: plantInfo.tamilName,
       medicinalUses: plantInfo.medicinalUses,
       keyBenefits: plantInfo.keyBenefits,
       sideEffects: plantInfo.sideEffects,

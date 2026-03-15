@@ -17,8 +17,35 @@ function PlantInfoCard({ data }) {
     sideEffects: data.sideEffects || data.side_effects,
     habitat: data.habitat,
     growingRegions: data.growingRegions || data.growing_regions,
-    commonNames: data.commonNames || data.common_names || []
+    commonNames: data.commonNames || data.common_names || [],
   };
+
+  // Local dictionary for common Indian plants as a safety net
+  const localDictionary = {
+    'Mango': { hindi: 'आम', tamil: 'மாம்பழம்', english: 'Indian Mango' },
+    'Tulsi': { hindi: 'तुलसी', tamil: 'துளசி', english: 'Holy Basil' },
+    'Neem': { hindi: 'नीम', tamil: 'வேம்பு', english: 'Indian Lilac' },
+    'Aloe Vera': { hindi: 'घृतकुमारी', tamil: 'கற்றாழை', english: 'Aloe Vera' },
+    'Hibiscus': { hindi: 'गुड़हल', tamil: 'செம்பருத்தி', english: 'Shoe Flower' },
+    'Peppermint': { hindi: 'पुदीना', tamil: 'புதினா', english: 'Mint' },
+    'Coriander': { hindi: 'धनिया', tamil: 'கொத்தமல்லி', english: 'Coriander' },
+    'Turmeric': { hindi: 'हल्दी', tamil: 'மஞ்சள்', english: 'Turmeric' },
+    'Spinach': { hindi: 'पालक', tamil: 'பசலைக்கீரை', english: 'Spinach' }
+  };
+
+  const nameMatch = Object.keys(localDictionary).find(k => 
+    k.toLowerCase() === (normalizedData.plantName || '').toLowerCase() || 
+    k.toLowerCase() === (normalizedData.scientificName || '').toLowerCase()
+  );
+
+  normalizedData.hindiName = data.hindiName || data.hindi_name || (nameMatch ? localDictionary[nameMatch].hindi : 'N/A');
+  normalizedData.tamilName = data.tamilName || data.tamil_name || (nameMatch ? localDictionary[nameMatch].tamil : 'N/A');
+  normalizedData.indianEnglishName = data.indianEnglishName || data.indian_english_name || (nameMatch ? localDictionary[nameMatch].english : normalizedData.plantName);
+
+  // Still treat "N/A" from DB as something to potentially override with dictionary
+  if (nameMatch && (normalizedData.hindiName === 'N/A' || !normalizedData.hindiName)) normalizedData.hindiName = localDictionary[nameMatch].hindi;
+  if (nameMatch && (normalizedData.tamilName === 'N/A' || !normalizedData.tamilName)) normalizedData.tamilName = localDictionary[nameMatch].tamil;
+
 
   const confidenceColor = (conf) => {
     if (conf >= 80) return 'text-lime-400';
@@ -56,8 +83,8 @@ function PlantInfoCard({ data }) {
                      <div className="absolute bottom-6 left-6 right-6 sm:bottom-8 sm:left-8 sm:right-8 z-20">
                         <div className="flex items-center justify-between">
                            <div className="space-y-1">
-                              <p className="text-[9px] font-black uppercase tracking-[0.3em] text-white/40">Visual Specimen</p>
-                              <p className="text-[10px] font-black text-white uppercase tracking-widest">BOT-ID_{Math.floor(Math.random() * 9000) + 1000}</p>
+                              <p className="text-[9px] font-black uppercase tracking-[0.3em] text-white/40">Scanned Image</p>
+                              <p className="text-[10px] font-black text-white uppercase tracking-widest">ID_{Math.floor(Math.random() * 9000) + 1000}</p>
                            </div>
                            <div className="h-9 w-9 sm:h-10 sm:w-10 bg-white/10 backdrop-blur-xl rounded-xl flex items-center justify-center border border-white/20">
                               <Camera size={16} className="text-white" />
@@ -89,15 +116,15 @@ function PlantInfoCard({ data }) {
                >
                   <div className="flex items-center gap-3">
                      <div className="px-3 py-1 bg-lime-500/10 border border-lime-500/20 rounded-full text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em] text-lime-500">
-                        Verified Record
+                        Match Found
                      </div>
                      <div className="h-[1px] w-8 sm:w-12 bg-white/5" />
-                     <div className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">Neural Sync Complete</div>
+                     <div className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em] text-slate-600 italic">Analysis Complete</div>
                   </div>
                   
                   <div className="space-y-2">
                     <h1 className="text-4xl xs:text-5xl sm:text-6xl md:text-8xl font-black tracking-tighter uppercase text-white leading-[0.95] sm:leading-[0.85] break-words">
-                      {normalizedData.plantName}
+                      {normalizedData.indianEnglishName || normalizedData.plantName}
                     </h1>
                     <p className="text-xl sm:text-2xl md:text-3xl italic font-medium text-slate-500 tracking-tight">
                       {normalizedData.scientificName}
@@ -105,7 +132,34 @@ function PlantInfoCard({ data }) {
                   </div>
 
                   <div className="flex flex-wrap gap-2 sm:gap-3 pt-2 sm:pt-4">
-                    {normalizedData.commonNames?.map((name, i) => (
+                    {/* Hindi Name Tag */}
+                    {normalizedData.hindiName && !['N/A', 'NA', 'NONE', 'UNKNOWN'].includes(normalizedData.hindiName.toUpperCase()) && (
+                      <div className="flex items-center gap-2 sm:gap-3 px-4 py-1.5 sm:px-5 sm:py-2 bg-orange-500/10 border border-orange-500/20 rounded-full">
+                         <div className="w-1.5 h-1.5 rounded-full bg-orange-500 shadow-[0_0_8px_rgba(249,115,22,0.5)]" />
+                         <span className="text-[10px] sm:text-xs font-bold text-orange-200">{normalizedData.hindiName}</span>
+                      </div>
+                    )}
+                    
+                    {/* Tamil Name Tag */}
+                    {normalizedData.tamilName && !['N/A', 'NA', 'NONE', 'UNKNOWN'].includes(normalizedData.tamilName.toUpperCase()) && (
+                      <div className="flex items-center gap-2 sm:gap-3 px-4 py-1.5 sm:px-5 sm:py-2 bg-sky-500/10 border border-sky-500/20 rounded-full">
+                         <div className="w-1.5 h-1.5 rounded-full bg-sky-500 shadow-[0_0_8px_rgba(14,165,233,0.5)]" />
+                         <span className="text-[10px] sm:text-xs font-bold text-sky-200">{normalizedData.tamilName}</span>
+                      </div>
+                    )}
+
+                    {/* Indian English Tag (if different from main name) */}
+                    {normalizedData.indianEnglishName && 
+                      normalizedData.indianEnglishName.toLowerCase() !== normalizedData.plantName.toLowerCase() && 
+                      !['N/A', 'NA', 'UNKNOWN'].includes(normalizedData.indianEnglishName.toUpperCase()) && (
+                      <div className="flex items-center gap-2 sm:gap-3 px-4 py-1.5 sm:px-5 sm:py-2 bg-lime-500/10 border border-lime-500/20 rounded-full">
+                         <div className="w-1.5 h-1.5 rounded-full bg-lime-500 shadow-[0_0_8px_rgba(132,204,22,0.5)]" />
+                         <span className="text-[10px] sm:text-xs font-bold text-lime-200">{normalizedData.indianEnglishName}</span>
+                      </div>
+                    )}
+
+                    {/* Fallback to other common names if regional ones missing or empty */}
+                    {normalizedData.commonNames?.filter(n => n !== normalizedData.plantName).map((name, i) => (
                       <div key={name} className="flex items-center gap-2 sm:gap-3 px-4 py-1.5 sm:px-5 sm:py-2 bg-white/[0.03] border border-white/5 rounded-full">
                          <div className="w-1.5 h-1.5 rounded-full bg-slate-700" />
                          <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-slate-300">{name}</span>
@@ -117,9 +171,9 @@ function PlantInfoCard({ data }) {
                {/* Quick Specs Grid (Responsive) */}
                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
                   {[
-                    { label: 'Botanical Family', value: normalizedData.family || 'Taxonomic Group', icon: FlaskConical },
-                    { label: 'Survival Rating', value: 'High Adaptation', icon: Zap },
-                    { label: 'Data Source', value: 'Neural Vision', icon: Database }
+                    { label: 'Plant Family', value: normalizedData.family || 'Unknown', icon: FlaskConical },
+                    { label: 'Hardiness', value: 'Adaptable', icon: Zap },
+                    { label: 'Identified By', value: 'PlantScan AI', icon: Database }
                   ].map((spec, i) => (
                     <div key={i} className={`p-5 bg-white/[0.02] border border-white/5 rounded-2xl sm:rounded-[2rem] flex flex-row sm:flex-col items-center sm:items-start justify-between sm:justify-between sm:h-32 ${i === 2 ? 'sm:col-span-2 lg:col-span-1' : ''}`}>
                        <spec.icon size={18} className="text-slate-600 shrink-0" />
@@ -145,7 +199,7 @@ function PlantInfoCard({ data }) {
                </div>
                <h3 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.4em] text-slate-500 mb-6 sm:mb-8 flex items-center gap-4">
                   <div className="w-6 sm:w-8 h-[1px] bg-lime-500" />
-                  SPECIMEN OVERVIEW
+                  PLANT OVERVIEW
                </h3>
                <div className="relative z-10">
                   <p className="text-base sm:text-lg md:text-xl text-slate-300 leading-relaxed font-medium">
@@ -155,32 +209,32 @@ function PlantInfoCard({ data }) {
                
                {/* Technical Footer deco */}
                <div className="mt-8 sm:mt-12 flex items-center justify-between pt-6 sm:pt-8 border-t border-white/5 opacity-50">
-                  <p className="text-[8px] sm:text-[9px] font-black text-slate-600 uppercase tracking-[0.4em] sm:tracking-[0.5em]">Neural Engine v4.2</p>
-                  <p className="text-[8px] sm:text-[9px] font-black text-slate-600 uppercase tracking-[0.4em] sm:tracking-[0.5em]">ID_CONFIRMED</p>
+                  <p className="text-[8px] sm:text-[9px] font-black text-slate-600 uppercase tracking-[0.4em] sm:tracking-[0.5em]">PlantScan v1.0</p>
+                  <p className="text-[8px] sm:text-[9px] font-black text-slate-600 uppercase tracking-[0.4em] sm:tracking-[0.5em]">VERIFIED</p>
                </div>
             </GlassCard>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
                <GlassCard className="p-6 sm:p-8 border-white/5 border-l-4 border-amber-500 bg-amber-500/[0.01]">
                   <h3 className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em] text-amber-500 mb-4 sm:mb-6 flex items-center gap-3">
-                     <AlertCircle size={14} /> PHYTO-TOXICITY
+                     <AlertCircle size={14} /> WARNINGS & TOXICITY
                   </h3>
                   <p className="text-slate-300 text-xs sm:text-sm font-bold uppercase tracking-wide leading-relaxed">
-                     {normalizedData.sideEffects || 'NO KNOWN ADVERSE REACTION RECORDED.'}
+                     {normalizedData.sideEffects || 'NO KNOWN SIDE EFFECTS.'}
                   </p>
                </GlassCard>
 
                <GlassCard className="p-6 sm:p-8 border-white/5 border-l-4 border-sky-500 bg-sky-500/[0.01]">
                   <h3 className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em] text-sky-500 mb-4 sm:mb-6 flex items-center gap-3">
-                     <Globe size={14} /> CLIMATE HABITAT
+                     <Globe size={14} /> NATURAL ENVIRONMENT
                   </h3>
                   <div className="space-y-4">
                      <div>
-                        <p className="text-[7px] sm:text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1">Ecosystem</p>
+                        <p className="text-[7px] sm:text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1">Habitat</p>
                         <p className="text-slate-300 text-xs sm:text-sm font-bold uppercase">{normalizedData.habitat}</p>
                      </div>
                      <div>
-                        <p className="text-[7px] sm:text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1">Growth Zones</p>
+                        <p className="text-[7px] sm:text-[8px] font-black text-slate-600 uppercase tracking-widest mb-1">Indian Regions</p>
                         <p className="text-slate-300 text-xs sm:text-sm font-bold uppercase">{normalizedData.growingRegions}</p>
                      </div>
                   </div>
@@ -192,7 +246,7 @@ function PlantInfoCard({ data }) {
          <div className="lg:col-span-4 space-y-6 sm:space-y-8">
             <GlassCard className="p-6 sm:p-8 border-white/5 border-t-4 border-lime-500 h-full">
                <h3 className="text-[10px] sm:text-xs font-black uppercase tracking-[0.3em] text-lime-400 mb-6 sm:mb-8 flex items-center gap-3">
-                  <CheckCircle2 size={16} /> ANALYZED BENEFITS
+                  <CheckCircle2 size={16} /> KEY BENEFITS
                </h3>
                <div className="space-y-4 sm:space-y-6">
                   {normalizedData.keyBenefits?.length > 0 ? normalizedData.keyBenefits.map((benefit, i) => (
@@ -202,17 +256,17 @@ function PlantInfoCard({ data }) {
                        <p className="text-slate-200 text-[10px] sm:text-xs font-black uppercase tracking-widest leading-normal group-hover:translate-x-1 transition-transform">{benefit}</p>
                     </div>
                   )) : (
-                    <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest leading-normal italic">No mapped benefits recorded.</p>
+                    <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest leading-normal italic">No benefits recorded.</p>
                   )}
                </div>
 
                <div className="mt-8 sm:mt-12 p-4 sm:p-6 bg-red-500/5 rounded-2xl sm:rounded-[2rem] border border-red-500/10 space-y-3 sm:space-y-4">
                   <div className="flex items-center gap-3 text-red-500">
                      <ShieldCheck size={16} />
-                     <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em]">Restriction Protocol</span>
+                     <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em]">Important Advice</span>
                   </div>
                   <p className="text-slate-400 text-[9px] sm:text-[10px] font-bold uppercase tracking-widest leading-relaxed">
-                     {normalizedData.restrictions || 'CRITICAL: MEDICAL CONSULTATION MANDATORY.'}
+                     {normalizedData.restrictions || 'ALWAYS CONSULT A PROFESSIONAL BEFORE USE.'}
                   </p>
                </div>
             </GlassCard>
@@ -226,7 +280,7 @@ function PlantInfoCard({ data }) {
               <div key={i} className="w-1 h-1 bg-white/10 rounded-full" />
             ))}
          </div>
-         <p className="text-[8px] sm:text-[9px] font-black text-slate-700 uppercase tracking-[0.6em] sm:tracking-[1em] text-center">END OF TECHNICAL SPECIMEN FILE</p>
+         <p className="text-[8px] sm:text-[9px] font-black text-slate-700 uppercase tracking-[0.6em] sm:tracking-[1em] text-center">END OF PLANT DETAILS</p>
       </div>
     </div>
   );

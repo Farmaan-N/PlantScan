@@ -34,25 +34,25 @@ function DashboardPage() {
   const dashboardStats = [
     { 
       icon: Activity, 
-      label: 'System Status', 
-      value: 'Operational', 
-      detail: 'AI Engine Active',
+      label: 'AI Status', 
+      value: 'Online', 
+      detail: 'Scanner is ready',
       color: 'text-lime-400', 
       bg: 'bg-lime-500/10'
     },
     { 
       icon: Leaf, 
-      label: 'Your Collection', 
+      label: 'My Plants', 
       value: stats.totalScans || '0', 
-      detail: 'Unique Species Found',
+      detail: 'Plants identified',
       color: 'text-emerald-400', 
       bg: 'bg-emerald-500/10'
     },
     { 
       icon: ShieldCheck, 
-      label: 'Accuracy Rating', 
+      label: 'AI Accuracy', 
       value: recentScans.length > 0 ? `${Math.round(recentScans.reduce((acc, s) => acc + s.confidence, 0) / recentScans.length)}%` : '98.4%', 
-      detail: 'Global AI Benchmark',
+      detail: 'Average score',
       color: 'text-blue-400', 
       bg: 'bg-blue-500/10'
     },
@@ -62,9 +62,9 @@ function DashboardPage() {
     <div className="space-y-12 max-w-7xl mx-auto">
       {/* Premium Header */}
       <SectionHeader 
-        badge="Botanical Dashboard"
+        badge="Dashboard"
         title={<>Welcome <span className="text-gradient">Back</span></>}
-        subtitle={`Hello ${user?.email?.split('@')[0] || 'Explorer'}, your botanical exploration gateway is ready. What would you like to scan today?`}
+        subtitle={`Hello ${user?.user_metadata?.username || user?.email?.split('@')[0] || 'User'}, your plant scanner is ready. What would you like to identify today?`}
         actions={
           <Button onClick={() => navigate('/scan')} className="px-8 !py-4 shadow-2xl group shadow-lime-500/20">
             <Camera size={20} className="group-hover:rotate-12 transition-transform" />
@@ -89,11 +89,11 @@ function DashboardPage() {
               <div className="w-16 h-16 bg-lime-500 rounded-2xl flex items-center justify-center mb-6 shadow-2xl shadow-lime-500/40">
                 <Zap size={32} className="text-slate-950 fill-current" />
               </div>
-              <h3 className="text-3xl font-black text-white tracking-tighter uppercase mb-2">Instant Analysis</h3>
-              <p className="text-slate-400 max-w-xs font-medium">Use our neural vision engine to identify plants with over 99% accuracy in seconds.</p>
+              <h3 className="text-3xl font-black text-white tracking-tighter uppercase mb-2">Quick Scan</h3>
+              <p className="text-slate-400 max-w-xs font-medium">Use our AI to identify any plant instantly with high accuracy.</p>
             </div>
             <div className="mt-12 flex items-center gap-2 text-lime-400 font-black text-xs uppercase tracking-widest group-hover:translate-x-2 transition-transform">
-              Launch Scanner <ArrowRight size={16} />
+              Open Camera <ArrowRight size={16} />
             </div>
           </GlassCard>
         </motion.div>
@@ -134,14 +134,14 @@ function DashboardPage() {
       <section className="relative pt-8">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <h2 className="text-2xl font-black tracking-tight uppercase text-white">Recent <span className="text-lime-400">Discoveries</span></h2>
-            <p className="text-slate-500 text-sm font-medium">Log of your latest botanical findings</p>
+            <h2 className="text-2xl font-black tracking-tight uppercase text-white">Recent <span className="text-lime-400">Scans</span></h2>
+            <p className="text-slate-500 text-sm font-medium">Your latest plant identifications</p>
           </div>
           <button
             onClick={() => navigate('/history')}
             className="px-4 py-2 border border-white/5 rounded-full text-slate-400 hover:text-white hover:bg-white/5 text-[10px] font-black uppercase tracking-widest transition-all"
           >
-            Manage Collection
+            View History
           </button>
         </div>
 

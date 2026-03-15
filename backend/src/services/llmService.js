@@ -26,16 +26,21 @@ const generatePlantInfo = async (plantName, scientificName) => {
   // Craft a clear, structured prompt for the LLM
   const prompt = `You are a helpful plant expert. Give simple, easy-to-understand information about the plant "${plantName}" (${scientificName}). Avoid using overly technical or complex scientific words.
   
-  Return ONLY a valid JSON object with exactly these 7 fields:
+  Return ONLY a valid JSON object with exactly these 10 fields:
   {
-    "description": "A simple 2-3 sentence description of what the plant looks like and its main features",
+    "description": "A simple 2-3 sentence description of what the plant looks like and its main features. Crucially, explicitly mention its scientific name in this overview.",
+    "indianEnglishName": "The most common local Indian English name (e.g., 'Alphonso Mango' or 'Neem'). Do not just repeat the input name if a more localized one exists.",
+    "hindiName": "The common name in Hindi script (Devanagari). E.g., 'आम' for Mango.",
+    "tamilName": "The common name in Tamil script. E.g., 'மாம்பழம்' for Mango.",
     "medicinalUses": "A simple explanation of how people use this plant for health or traditional remedies",
     "keyBenefits": "List the top 3 most important uses or health benefits of the plant as an array of strings",
     "sideEffects": "A simple description of any bad effects or things to watch out for",
     "restrictions": "Simple information on who should not use it (like children or pregnant women) and safety tips",
     "habitat": "A simple description of where it usually grows",
-    "growingRegions": "A simple list of regions or countries where it is found"
+    "growingRegions": "A simple list of Indian regions or states where it is found, instead of global countries"
   }
+  
+  CRITICAL: If the plant name is commonly known in India, you MUST provide the Hindi and Tamil names. Do not return 'N/A' unless it is an extremely rare foreign species.
   
   Do not include any text before or after the JSON object. Do not include markdown formatting like \`\`\`json.`;
 
@@ -74,6 +79,9 @@ const generatePlantInfo = async (plantName, scientificName) => {
     // Ensure all required fields are present
     return {
       description: plantInfo.description || 'No description available.',
+      indianEnglishName: plantInfo.indianEnglishName || plantName,
+      hindiName: plantInfo.hindiName || 'N/A',
+      tamilName: plantInfo.tamilName || 'N/A',
       medicinalUses: plantInfo.medicinalUses || 'No medicinal information available.',
       keyBenefits: plantInfo.keyBenefits || [],
       sideEffects: plantInfo.sideEffects || 'No common side effects reported.',
@@ -92,12 +100,15 @@ const generatePlantInfo = async (plantName, scientificName) => {
  */
 const getPlaceholderInfo = (plantName) => ({
   description: `${plantName} is a beautiful plant. Please add your Gemini API key in the settings to see a full description.`,
+  indianEnglishName: plantName,
+  hindiName: 'नाम',
+  tamilName: 'பெயர்',
   medicinalUses: 'Information about how this plant is used for health will show up here.',
   keyBenefits: ['Benefit 1', 'Benefit 2', 'Benefit 3'],
   sideEffects: 'Any side effects will be listed here.',
   restrictions: 'Important warnings will be shown here.',
   habitat: 'Info about where it grows naturally will appear here.',
-  growingRegions: 'The parts of the world where this plant grows will be shown here.',
+  growingRegions: 'The Indian states where this plant grows will be shown here.',
 });
 
 module.exports = { generatePlantInfo };

@@ -121,7 +121,7 @@ function RecentScans({ scans = [], onDelete, limit = 0, showDeleteButton = false
                 <div className="flex items-center gap-2">
                   <div className="h-[1px] w-4 bg-slate-700" />
                   <p className="text-slate-500 text-[10px] font-bold uppercase tracking-widest truncate max-w-[200px]">
-                    {scan.scientific_name}
+                    {scan.tamil_name || scan.scientific_name}
                   </p>
                 </div>
               </div>
