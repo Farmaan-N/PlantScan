@@ -13,41 +13,29 @@ function CameraCapture({ onCapture, onClose }) {
   const streamRef = useRef(null);
 
   const [isStreaming, setIsStreaming] = useState(false);
-  const [isCameraLoading, setIsCameraLoading] = useState(true);
   const [capturedImage, setCapturedImage] = useState(null);
   const [error, setError] = useState(null);
   const [facingMode, setFacingMode] = useState('environment');
 
   const startCamera = useCallback(async () => {
     setError(null);
-    setIsCameraLoading(true);
     try {
       if (streamRef.current) {
         streamRef.current.getTracks().forEach(track => track.stop());
       }
       const stream = await navigator.mediaDevices.getUserMedia({
-        video: { 
-          facingMode, 
-          width: { ideal: 1920 }, 
-          height: { ideal: 1080 } 
-        },
+        video: { facingMode, width: { ideal: 1920 }, height: { ideal: 1080 } },
         audio: false,
       });
       streamRef.current = stream;
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        // Wait for video to be ready
-        videoRef.current.onloadedmetadata = () => {
-          setIsStreaming(true);
-          setIsCameraLoading(false);
-        };
+        setIsStreaming(true);
       }
     } catch (err) {
-      console.error('Camera Error:', err);
       setError(err.name === 'NotAllowedError' 
         ? 'Permission Denied: Please allow camera access.' 
-        : 'Error: Camera not found or unusable.');
-      setIsCameraLoading(false);
+        : 'Error: Camera not found.');
     }
   }, [facingMode]);
 
@@ -112,20 +100,13 @@ function CameraCapture({ onCapture, onClose }) {
 
       {/* Live Viewfinder */}
       {!error && !capturedImage && (
-        <div className="relative h-full w-full flex flex-col bg-black">
-          {isCameraLoading && !error && (
-            <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-950">
-              <div className="w-16 h-16 border-4 border-lime-500/20 border-t-lime-500 rounded-full animate-spin mb-6" />
-              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-slate-500">Initializing Optical Sensor...</p>
-            </div>
-          )}
-          
+        <div className="relative h-full w-full flex flex-col">
           <video 
             ref={videoRef} 
             autoPlay 
             playsInline 
             muted 
-            className={`flex-1 w-full h-full object-cover sm:aspect-video transition-opacity duration-1000 ${isStreaming ? 'opacity-100' : 'opacity-0'}`}
+            className="flex-1 w-full h-full object-cover sm:aspect-video" 
           />
           
           {/* Overlay UI */}

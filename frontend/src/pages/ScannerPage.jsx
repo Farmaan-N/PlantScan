@@ -23,16 +23,14 @@ function ScannerPage() {
   };
 
   return (
-    <div className="max-w-6xl mx-auto space-y-12 pb-24">
+    <div className="max-w-6xl mx-auto space-y-12">
       {/* Header - Completely removed when camera is active for a focused experience */}
       <AnimatePresence>
         {mode !== 'camera' && (
           <motion.div
-            key="header"
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -20 }}
-            className="z-10"
           >
             <SectionHeader
               badge="AI Scanner"
@@ -46,7 +44,7 @@ function ScannerPage() {
       <AnimatePresence mode="wait">
         {isLoading ? (
           <motion.div
-            key="loading-view"
+            key="loading"
             initial={{ opacity: 0, scale: 0.95 }}
             animate={{ opacity: 1, scale: 1 }}
             exit={{ opacity: 0, scale: 0.9 }}
@@ -78,13 +76,7 @@ function ScannerPage() {
             </GlassCard>
           </motion.div>
         ) : (
-          <motion.div
-            key="main-view"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="space-y-6 sm:space-y-8"
-          >
+          <div className="space-y-6 sm:space-y-8">
             {/* Error handling */}
             <AnimatePresence>
               {error && (
@@ -173,6 +165,43 @@ function ScannerPage() {
               </div>
             )}
 
+            {/* Active Mode View - Optimized for Large & Small Screens */}
+            {mode === 'camera' && (
+              <div className="fixed inset-0 z-[200] bg-slate-950 sm:relative sm:inset-auto sm:z-auto sm:bg-transparent sm:animate-fade-in sm:space-y-8 max-w-4xl mx-auto">
+                {/* Mobile Top Bar (Only visible on small devices) */}
+                <div className="flex sm:hidden items-center justify-between p-6 absolute top-0 left-0 right-0 z-[210] pointer-events-none">
+                   <button 
+                     onClick={() => setMode(null)} 
+                     className="pointer-events-auto p-3 bg-slate-950/40 backdrop-blur-md rounded-2xl text-white/70 hover:text-white transition-all border border-white/5"
+                   >
+                     <ChevronLeft size={20} />
+                   </button>
+                   <div className="pointer-events-none flex items-center gap-2 px-3 py-1.5 bg-red-500/10 backdrop-blur-md border border-red-500/20 rounded-full">
+                     <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                     <span className="text-[8px] font-black uppercase tracking-[0.2em] text-red-500">Live Lens</span>
+                   </div>
+                </div>
+
+                {/* Desktop/Tablet Header (Only visible on larger screens) */}
+                <div className="hidden sm:flex flex-row items-center justify-between gap-4 px-4 sm:px-0 mb-8">
+                    <button onClick={() => setMode(null)} className="flex items-center gap-2 text-slate-500 hover:text-white text-[10px] font-black uppercase tracking-[0.3em] transition-all group">
+                     <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> 
+                     <span>BACK TO SCANNER</span>
+                   </button>
+                  <div className="flex items-center gap-2 px-4 py-2 bg-red-500/5 border border-red-500/10 rounded-full w-fit">
+                    <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-red-500">Live Lens Active</span>
+                  </div>
+                </div>
+
+                <div className="h-full sm:h-auto sm:rounded-[4rem] overflow-hidden sm:border sm:border-white/10 sm:glass-card sm:p-2 sm:shadow-2xl">
+                  <div className="h-full sm:h-auto sm:rounded-[3.5rem] overflow-hidden bg-black relative">
+                    <CameraCapture onCapture={handleCameraCapture} onClose={() => setMode(null)} />
+                  </div>
+                </div>
+              </div>
+            )}
+
             {mode === 'upload' && (
               <div className="max-w-3xl mx-auto space-y-6 sm:space-y-8 animate-fade-in">
                 <div className="flex items-center justify-between px-4">
@@ -192,7 +221,7 @@ function ScannerPage() {
 
             {/* Confirm section for camera capture result */}
             {selectedFile && mode === null && (
-              <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }} key="confirm-selection">
+              <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}>
                 <GlassCard className="p-8 sm:p-12 max-w-2xl mx-auto rounded-[2.5rem] sm:rounded-[3.5rem] relative overflow-hidden">
                   <div className="absolute top-0 right-0 w-48 h-48 bg-lime-500/5 -mr-24 -mt-24 rounded-full blur-3xl opacity-50 pointer-events-none" />
 
@@ -275,51 +304,7 @@ function ScannerPage() {
                 </motion.div>
               )}
             </AnimatePresence>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* Camera Overlay - Rendered outside the AnimatePresence and transformed div to avoid blank screen issues */}
-      <AnimatePresence>
-        {mode === 'camera' && (
-          <motion.div 
-            key="camera-overlay"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[999] bg-black sm:bg-transparent sm:relative sm:inset-auto sm:z-auto sm:flex sm:flex-col sm:max-w-4xl sm:mx-auto"
-          >
-            {/* Mobile Top Bar Overlay */}
-            <div className="flex sm:hidden items-center justify-between p-6 fixed top-0 left-0 right-0 z-[1000] pointer-events-none">
-                <button 
-                  onClick={() => setMode(null)} 
-                  className="pointer-events-auto p-4 bg-slate-950/60 backdrop-blur-xl rounded-2xl text-white/70 hover:text-white transition-all border border-white/5 active:scale-90"
-                >
-                  <ChevronLeft size={24} />
-                </button>
-                <div className="pointer-events-none flex items-center gap-2 px-4 py-2 bg-red-500/20 backdrop-blur-xl border border-red-500/30 rounded-full">
-                  <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse shadow-[0_0_10px_#ef4444]" />
-                  <span className="text-[10px] font-black uppercase tracking-[0.2em] text-red-500">Live Lens</span>
-                </div>
-            </div>
-
-            {/* Desktop/Tablet Header Overlay */}
-            <div className="hidden sm:flex flex-row items-center justify-between gap-4 px-4 sm:px-0 mb-8 z-10">
-                <button onClick={() => setMode(null)} className="flex items-center gap-2 text-slate-500 hover:text-white text-[10px] font-black uppercase tracking-[0.3em] transition-all group">
-                  <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> 
-                  <span>BACK TO SCANNER</span>
-                </button>
-                <div className="flex items-center gap-2 px-4 py-2 bg-red-500/5 border border-red-500/10 rounded-full w-fit">
-                <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                <span className="text-[9px] font-black uppercase tracking-[0.2em] text-red-500">Live Lens Active</span>
-              </div>
-            </div>
-
-            {/* Camera Container */}
-            <div className="h-full w-full sm:h-auto sm:rounded-[4rem] overflow-hidden sm:border sm:border-white/10 sm:p-2 sm:shadow-2xl bg-black">
-              <CameraCapture onCapture={handleCameraCapture} onClose={() => setMode(null)} />
-            </div>
-          </motion.div>
+          </div>
         )}
       </AnimatePresence>
     </div>
