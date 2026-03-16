@@ -6,8 +6,16 @@ import { supabase } from '../lib/supabase';
  * Central Axios instance for all backend API communication.
  * Automatically prefixes all requests with /api.
  */
+const getBaseURL = () => {
+  const envUrl = import.meta.env.VITE_API_URL;
+  if (!envUrl) return '/api';
+  
+  // Ensure the custom URL ends with /api if it doesn't already
+  return envUrl.endsWith('/api') ? envUrl : `${envUrl.replace(/\/$/, '')}/api`;
+};
+
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || '/api',
+  baseURL: getBaseURL(),
   timeout: 60000,   // 60 second timeout (LLM can be slow)
   headers: {
     'Content-Type': 'application/json',
@@ -36,13 +44,43 @@ api.interceptors.request.use(
 // ── Response Interceptor ─────────────────────────────────────────────────────
 // Runs on every response - extracts error messages for consistent error handling
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    if (import.meta.env.DEV) {
+      console.log(`✅ API Success: ${response.config.url}`, response.data);
+    }
+    return response;
+  },
   (error) => {
-    const message =
-      error.response?.data?.error ||
-      error.response?.data?.message ||
-      error.message ||
-      'An unexpected error occurred';
+    if (import.meta.env.DEV || import.meta.env.PROD) {
+      console.error('❌ API Error Details:', {
+        url: error.config?.url,
+        status: error.response?.status,
+        data: error.response?.data,
+        message: error.message
+      });
+    }
+
+    let message = 'An unexpected error occurred';
+    
+    if (error.response?.data) {
+      const data = error.response.data;
+      // Extract message from various common error formats
+      if (typeof data === 'string') {
+        message = data;
+      } else if (data.error) {
+        message = typeof data.error === 'object' ? (data.error.message || JSON.stringify(data.error)) : data.error;
+      } else if (data.message) {
+        message = typeof data.message === 'object' ? JSON.stringify(data.message) : data.message;
+      }
+    } else if (error.message) {
+      message = error.message;
+    }
+
+    // Special handling for CORS or Network errors
+    if (error.message === 'Network Error' && !error.response) {
+      message = 'Connection error. Please check if the backend is running and CORS is configured correctly.';
+    }
+
     return Promise.reject(new Error(message));
   }
 );
