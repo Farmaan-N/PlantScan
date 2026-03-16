@@ -83,7 +83,7 @@ function CameraCapture({ onCapture, onClose }) {
   }, [startCamera, stopCamera]);
 
   return (
-    <div className="relative bg-slate-950 overflow-hidden h-[100dvh] sm:h-auto">
+    <div className="relative bg-slate-950 overflow-hidden">
       {/* Error State */}
       <AnimatePresence>
         {error && (
@@ -100,65 +100,51 @@ function CameraCapture({ onCapture, onClose }) {
 
       {/* Live Viewfinder */}
       {!error && !capturedImage && (
-        <div className="relative h-full w-full flex flex-col">
-          <video 
-            ref={videoRef} 
-            autoPlay 
-            playsInline 
-            muted 
-            className="flex-1 w-full h-full object-cover sm:aspect-video" 
-          />
+        <div className="relative group">
+          <video ref={videoRef} autoPlay playsInline muted className="w-full aspect-[3/4] md:aspect-video object-cover" />
           
           {/* Overlay UI */}
-          <div className="absolute inset-0 pointer-events-none border-[12px] sm:border-[20px] border-slate-950/20">
+          <div className="absolute inset-0 pointer-events-none border-[10px] sm:border-[20px] border-slate-950/20">
              {/* Scanning Lines */}
              <motion.div 
-               animate={{ top: ['10%', '90%', '10%'] }} 
+               animate={{ top: ['0%', '100%', '0%'] }} 
                transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-               className="absolute left-0 right-0 h-px bg-lime-500/30 shadow-[0_0_15px_#84cc16] z-10" 
+               className="absolute left-0 right-0 h-px bg-lime-500/30 shadow-[0_0_10px_#84cc16] z-10" 
              />
              
              {/* Corner Brackets */}
-             <div className="absolute inset-10 sm:inset-16 border border-white/5 overflow-hidden">
-                <div className="absolute top-0 left-0 w-8 h-8 sm:w-12 sm:h-12 border-t-2 border-l-2 border-lime-400 rounded-tl-2xl sm:rounded-tl-[3rem]" />
-                <div className="absolute top-0 right-0 w-8 h-8 sm:w-12 sm:h-12 border-t-2 border-r-2 border-lime-400 rounded-tr-xl sm:rounded-tr-[3rem]" />
-                <div className="absolute bottom-0 left-0 w-8 h-8 sm:w-12 sm:h-12 border-b-2 border-l-2 border-lime-400 rounded-bl-2xl sm:rounded-bl-[3rem]" />
-                <div className="absolute bottom-0 right-0 w-8 h-8 sm:w-12 sm:h-12 border-b-2 border-r-2 border-lime-400 rounded-br-xl sm:rounded-br-[3rem]" />
+             <div className="absolute inset-6 sm:inset-12 border border-white/10 overflow-hidden">
+                <div className="absolute top-0 left-0 w-6 h-6 sm:w-8 sm:h-8 border-t-2 border-l-2 border-lime-400 rounded-tl-xl sm:rounded-tl-2xl" />
+                <div className="absolute top-0 right-0 w-6 h-6 sm:w-8 sm:h-8 border-t-2 border-r-2 border-lime-400 rounded-tr-xl sm:rounded-tr-2xl" />
+                <div className="absolute bottom-0 left-0 w-6 h-6 sm:w-8 sm:h-8 border-b-2 border-l-2 border-lime-400 rounded-bl-xl sm:rounded-bl-2xl" />
+                <div className="absolute bottom-0 right-0 w-6 h-6 sm:w-8 sm:h-8 border-b-2 border-r-2 border-lime-400 rounded-br-xl sm:rounded-br-2xl" />
                 
                 {/* Botanical Guide Central */}
-                <div className="absolute inset-0 flex items-center justify-center opacity-10">
-                   <div className="w-40 h-56 sm:w-64 sm:h-80 border-2 border-dashed border-lime-400/50 rounded-[100%_0%_100%_0%] rotate-45" />
+                <div className="absolute inset-0 flex items-center justify-center opacity-20">
+                   <div className="w-32 h-44 sm:w-48 sm:h-64 border-2 border-dashed border-lime-400/50 rounded-[100%_0%_100%_0%] rotate-45" />
                 </div>
              </div>
 
              {/* HUD elements */}
-             <div 
-               className="absolute top-6 left-6 flex items-center gap-2 px-3 py-1.5 bg-black/40 backdrop-blur-md rounded-lg border border-white/5"
-               style={{ marginTop: 'env(safe-area-inset-top)' }}
-             >
-                <div className="w-1.5 h-1.5 rounded-full bg-lime-500 shadow-[0_0_8px_#84cc16]" />
-                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">ISO 400 // OPTIC READY</span>
+             <div className="absolute top-4 left-4 sm:top-8 sm:left-8 flex items-center gap-2">
+                <div className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-red-500 animate-pulse" />
+                <span className="text-[8px] sm:text-[10px] font-black uppercase tracking-[0.2em] text-white">Ready to capture</span>
              </div>
-              <div 
-                className="absolute bottom-40 sm:bottom-32 left-1/2 -translate-x-1/2 text-center pointer-events-none"
-                style={{ marginBottom: 'env(safe-area-inset-bottom)' }}
-              >
-                 <p className="text-[10px] font-black uppercase tracking-[0.3em] text-white/50 bg-black/20 backdrop-blur-sm px-4 py-1 rounded-full">AI BOUNDING BOX ACTIVE</p>
+              <div className="absolute bottom-6 right-6 text-right hidden sm:block">
+                 <p className="text-[8px] font-black uppercase tracking-[0.3em] text-white/50">Quality: High</p>
+                 <p className="text-[8px] font-black uppercase tracking-[0.3em] text-white/50">Camera: Active</p>
               </div>
           </div>
 
-          {/* Controls - Positioned at the bottom for thumb reach */}
-          <div 
-            className="absolute bottom-0 left-0 right-0 p-8 pb-12 sm:pb-8 flex items-center justify-between bg-gradient-to-t from-slate-950/90 via-slate-950/40 to-transparent"
-            style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 3rem)' }}
-          >
+          {/* Controls */}
+          <div className="absolute bottom-0 left-0 right-0 p-6 sm:p-8 flex items-center justify-between bg-gradient-to-t from-slate-950/90 to-transparent">
              <button 
                type="button"
                onClick={(e) => {
                  e.stopPropagation();
                  onClose();
                }} 
-               className="p-4 sm:p-5 bg-white/5 backdrop-blur-xl rounded-2xl text-white/50 hover:text-white active:scale-95 transition-all border border-white/5 relative z-50 cursor-pointer"
+               className="p-3 sm:p-4 bg-white/5 backdrop-blur-md rounded-2xl text-white hover:bg-white/10 active:scale-95 transition-all border border-white/5 relative z-50 cursor-pointer"
                aria-label="Close Camera"
              >
                 <X size={20} className="sm:w-6 sm:h-6" />
@@ -167,56 +153,48 @@ function CameraCapture({ onCapture, onClose }) {
              <button 
                onClick={capturePhoto}
                disabled={!isStreaming}
-               className="w-20 h-20 sm:w-24 sm:h-24 rounded-full bg-white flex items-center justify-center group active:scale-90 transition-transform shadow-[0_0_50px_rgba(255,255,255,0.2)] relative z-50"
+               className="w-16 h-16 sm:w-20 sm:h-20 rounded-full bg-white flex items-center justify-center group active:scale-90 transition-transform shadow-[0_0_30px_rgba(255,255,255,0.3)] relative"
                aria-label="Capture Photo"
              >
-                <div className="w-16 h-16 sm:w-20 sm:h-20 rounded-full border-[4px] border-slate-950 flex items-center justify-center">
-                   <div className="w-12 h-12 sm:w-14 sm:h-14 bg-lime-500 rounded-full group-hover:scale-110 transition-transform shadow-inner" />
+                <div className="w-13 h-13 sm:w-16 sm:h-16 rounded-full border-[3px] border-slate-950 flex items-center justify-center">
+                   <div className="w-8 h-8 sm:w-10 sm:h-10 bg-lime-500 rounded-full group-hover:scale-110 transition-transform" />
                 </div>
              </button>
 
              <button 
-               type="button"
-               onClick={(e) => {
-                 e.stopPropagation();
-                 flipCamera();
-               }} 
-               className="p-4 sm:p-5 bg-white/5 backdrop-blur-xl rounded-2xl text-white/50 hover:text-white active:scale-95 transition-all border border-white/5 relative z-50 cursor-pointer"
+               onClick={flipCamera} 
+               className="p-3 sm:p-4 bg-white/5 backdrop-blur-md rounded-2xl text-white hover:bg-white/10 active:scale-95 transition-all border border-white/5"
                aria-label="Switch Camera"
              >
-                <RefreshCw size={20} className="sm:w-6 sm:h-6" />
+                <RefreshCw size={20} className="sm:size-[24px]" />
              </button>
           </div>
         </div>
       )}
 
-      {/* Captured Image Preview - Optimized for Full Screen */}
+      {/* Captured Image Preview */}
       {capturedImage && (
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative h-full w-full flex flex-col bg-slate-950">
-          <img src={capturedImage} alt="Captured" className="flex-1 w-full h-full object-cover opacity-60" />
-          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/40 via-transparent to-slate-950/95" />
+        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="relative bg-slate-950">
+          <img src={capturedImage} alt="Captured" className="w-full aspect-[3/4] md:aspect-video object-cover opacity-80" />
+          <div className="absolute inset-0 bg-gradient-to-b from-slate-950/20 via-transparent to-slate-950/90" />
           
-          <div className="absolute inset-0 flex flex-col items-center justify-center p-8 text-center">
+          <div className="absolute inset-0 flex flex-col items-center justify-end p-8 sm:p-12 text-center">
              <motion.div 
                initial={{ scale: 0.8, opacity: 0 }}
                animate={{ scale: 1, opacity: 1 }}
-               className="w-16 h-16 bg-lime-500 rounded-3xl flex items-center justify-center mb-6 shadow-[0_0_50px_rgba(132,204,22,0.5)]"
+               className="w-14 h-14 sm:w-16 sm:h-16 bg-lime-500 rounded-2xl flex items-center justify-center mb-4 sm:mb-6 shadow-[0_0_30px_rgba(132,204,22,0.4)]"
              >
-                <Sparkles className="text-slate-950" size={32} />
+                <Sparkles className="text-slate-950" size={28} sm:size={32} />
              </motion.div>
+             <h3 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-white mb-2">Snapshot Secured</h3>
+             <p className="text-slate-400 text-xs sm:text-sm font-medium mb-8 sm:mb-10 max-w-[240px] sm:max-w-xs uppercase tracking-widest">Image processed and ready for botanical analysis.</p>
              
-             <div className="space-y-2 mb-12">
-               <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tighter text-white">Specimen Captured</h3>
-               <p className="text-lime-400 text-[10px] font-black uppercase tracking-[0.3em]">Processing Visual Signal 1.0</p>
-               <p className="text-slate-400 text-xs font-medium max-w-[260px] mx-auto mt-4">The AI model is ready to analyze this plant's characteristics.</p>
-             </div>
-             
-             <div className="flex flex-col sm:flex-row gap-4 w-full max-w-xs sm:max-w-md">
-                <Button variant="secondary" onClick={retake} fullWidth className="!py-4 text-[10px] sm:text-xs tracking-widest !rounded-2xl border-white/10 hover:bg-white/5">
-                   RETAKE PHOTO
+             <div className="flex gap-3 sm:gap-4 w-full max-w-sm">
+                <Button variant="secondary" onClick={retake} fullWidth className="!py-3 sm:!py-4 text-[10px] sm:text-xs tracking-widest !rounded-xl transition-all hover:bg-white/10">
+                   RETAKE
                 </Button>
-                <Button onClick={confirmCapture} fullWidth className="!py-4 text-[10px] sm:text-xs tracking-widest shadow-[0_0_30px_rgba(132,204,22,0.3)] !rounded-2xl">
-                   START BOTANICAL SCAN
+                <Button onClick={confirmCapture} fullWidth className="!py-3 sm:!py-4 text-[10px] sm:text-xs tracking-widest shadow-[0_0_20px_rgba(132,204,22,0.3)] !rounded-xl">
+                   IDENTIFY
                 </Button>
              </div>
           </div>

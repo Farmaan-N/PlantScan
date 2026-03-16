@@ -24,22 +24,14 @@ function ScannerPage() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-12">
-      {/* Header - Completely removed when camera is active for a focused experience */}
-      <AnimatePresence>
-        {mode !== 'camera' && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-          >
-            <SectionHeader
-              badge="AI Scanner"
-              title={<>Identify <span className="text-gradient">Plant</span></>}
-              subtitle="Use our AI scanner to find out exactly what plant you have in front of you."
-            />
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* Header - Hidden in camera mode on mobile to save space */}
+      <div className={`${mode === 'camera' ? 'hidden sm:block' : ''}`}>
+        <SectionHeader
+          badge="AI Scanner"
+          title={<>Identify <span className="text-gradient">Plant</span></>}
+          subtitle="Use our AI scanner to find out exactly what plant you have in front of you."
+        />
+      </div>
 
       <AnimatePresence mode="wait">
         {isLoading ? (
@@ -165,37 +157,22 @@ function ScannerPage() {
               </div>
             )}
 
-            {/* Active Mode View - Optimized for Large & Small Screens */}
+            {/* Active Mode View */}
             {mode === 'camera' && (
-              <div className="fixed inset-0 z-[200] bg-slate-950 sm:relative sm:inset-auto sm:z-auto sm:bg-transparent sm:animate-fade-in sm:space-y-8 max-w-4xl mx-auto">
-                {/* Mobile Top Bar (Only visible on small devices) */}
-                <div className="flex sm:hidden items-center justify-between p-6 absolute top-0 left-0 right-0 z-[210] pointer-events-none">
-                   <button 
-                     onClick={() => setMode(null)} 
-                     className="pointer-events-auto p-3 bg-slate-950/40 backdrop-blur-md rounded-2xl text-white/70 hover:text-white transition-all border border-white/5"
-                   >
-                     <ChevronLeft size={20} />
+              <div className="max-w-4xl mx-auto animate-fade-in space-y-4 sm:space-y-8">
+                <div className="flex flex-row items-center justify-between gap-4 px-4 sm:px-0">
+                    <button onClick={() => setMode(null)} className="flex items-center gap-2 text-slate-500 hover:text-white text-[8px] sm:text-[10px] font-black uppercase tracking-[0.3em] transition-all group">
+                     <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform sm:size-16" /> 
+                     <span className="hidden xs:inline">BACK TO SCANNER</span>
+                     <span className="xs:hidden">BACK</span>
                    </button>
-                   <div className="pointer-events-none flex items-center gap-2 px-3 py-1.5 bg-red-500/10 backdrop-blur-md border border-red-500/20 rounded-full">
-                     <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                     <span className="text-[8px] font-black uppercase tracking-[0.2em] text-red-500">Live Lens</span>
-                   </div>
-                </div>
-
-                {/* Desktop/Tablet Header (Only visible on larger screens) */}
-                <div className="hidden sm:flex flex-row items-center justify-between gap-4 px-4 sm:px-0 mb-8">
-                    <button onClick={() => setMode(null)} className="flex items-center gap-2 text-slate-500 hover:text-white text-[10px] font-black uppercase tracking-[0.3em] transition-all group">
-                     <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> 
-                     <span>BACK TO SCANNER</span>
-                   </button>
-                  <div className="flex items-center gap-2 px-4 py-2 bg-red-500/5 border border-red-500/10 rounded-full w-fit">
+                  <div className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-red-500/5 border border-red-500/10 rounded-full w-fit">
                     <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
-                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-red-500">Live Lens Active</span>
+                    <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.2em] text-red-500">Live Lens Active</span>
                   </div>
                 </div>
-
-                <div className="h-full sm:h-auto sm:rounded-[4rem] overflow-hidden sm:border sm:border-white/10 sm:glass-card sm:p-2 sm:shadow-2xl">
-                  <div className="h-full sm:h-auto sm:rounded-[3.5rem] overflow-hidden bg-black relative">
+                <div className="rounded-2xl sm:rounded-[4rem] overflow-hidden border border-white/10 glass-card p-0.5 sm:p-2 shadow-2xl">
+                  <div className="rounded-xl sm:rounded-[3.5rem] overflow-hidden bg-black relative">
                     <CameraCapture onCapture={handleCameraCapture} onClose={() => setMode(null)} />
                   </div>
                 </div>
@@ -261,49 +238,40 @@ function ScannerPage() {
               </motion.div>
             )}
 
-            {/* Tactical Grid Overlay on the bottom - Completely hidden in camera mode for zero distraction */}
-            <AnimatePresence>
-              {mode !== 'camera' && (
-                <motion.div 
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: 20 }}
-                  className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 pt-6 sm:pt-12"
-                >
-                  <div className="md:col-span-2 space-y-6">
-                    <div className="flex items-center gap-4">
-                          <div className="h-[1px] flex-1 bg-white/5" />
-                         <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em] sm:tracking-[0.4em] text-slate-600">Scan Tips</p>
-                         <div className="h-[1px] flex-1 bg-white/5" />
+            {/* Tactical Grid Overlay on the bottom - Only shown when not in active camera mode on small devices */}
+            <div className={`max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 pt-6 sm:pt-12 ${mode === 'camera' ? 'hidden sm:grid' : 'grid'}`}>
+              <div className="md:col-span-2 space-y-6">
+                <div className="flex items-center gap-4">
+                      <div className="h-[1px] flex-1 bg-white/5" />
+                     <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em] sm:tracking-[0.4em] text-slate-600">Scan Tips</p>
+                     <div className="h-[1px] flex-1 bg-white/5" />
+                </div>
+                <div className="grid grid-cols-2 xs:grid-cols-2 gap-4">
+                  {[
+                    { label: 'Lighting', value: 'High Lux', icon: Sparkles },
+                    { label: 'Position', value: 'Centered', icon: Scan },
+                    { label: 'Background', value: 'Clean', icon: Info },
+                    { label: 'Focus', value: 'Macro', icon: HelpCircle }
+                  ].map((item, i) => (
+                    <div key={i} className="flex items-center gap-3 p-3 sm:p-4 bg-white/[0.02] border border-white/5 rounded-2xl">
+                      <item.icon size={14} className="text-slate-600 shrink-0" />
+                      <div className="space-y-0.5 overflow-hidden">
+                        <p className="text-[8px] font-black uppercase tracking-widest text-slate-500">{item.label}</p>
+                        <p className="text-[9px] sm:text-[10px] font-bold text-white uppercase tracking-tight truncate">{item.value}</p>
+                      </div>
                     </div>
-                    <div className="grid grid-cols-2 xs:grid-cols-2 gap-4">
-                      {[
-                        { label: 'Lighting', value: 'High Lux', icon: Sparkles },
-                        { label: 'Position', value: 'Centered', icon: Scan },
-                        { label: 'Background', value: 'Clean', icon: Info },
-                        { label: 'Focus', value: 'Macro', icon: HelpCircle }
-                      ].map((item, i) => (
-                        <div key={i} className="flex items-center gap-3 p-3 sm:p-4 bg-white/[0.02] border border-white/5 rounded-2xl">
-                          <item.icon size={14} className="text-slate-600 shrink-0" />
-                          <div className="space-y-0.5 overflow-hidden">
-                            <p className="text-[8px] font-black uppercase tracking-widest text-slate-500">{item.label}</p>
-                            <p className="text-[9px] sm:text-[10px] font-bold text-white uppercase tracking-tight truncate">{item.value}</p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-                  <div className="flex flex-col justify-end p-4 border-t sm:border-t-0 sm:border-l border-white/5 sm:pl-8 text-center sm:text-left">
-                       <p className="text-slate-700 font-bold uppercase tracking-[0.3em] text-[8px] leading-[2]">
-                        PlantScan v1.0 <br className="hidden sm:block" />
-                        AI Model: Active <br className="hidden sm:block" />
-                        Status: Online <br className="hidden sm:block" />
-                        Secure Connection
-                      </p>
-                  </div>
-                </motion.div>
-              )}
-            </AnimatePresence>
+                  ))}
+                </div>
+              </div>
+              <div className="flex flex-col justify-end p-4 border-t sm:border-t-0 sm:border-l border-white/5 sm:pl-8 text-center sm:text-left">
+                   <p className="text-slate-700 font-bold uppercase tracking-[0.3em] text-[8px] leading-[2]">
+                    PlantScan v1.0 <br className="hidden sm:block" />
+                    AI Model: Active <br className="hidden sm:block" />
+                    Status: Online <br className="hidden sm:block" />
+                    Secure Connection
+                  </p>
+              </div>
+            </div>
           </div>
         )}
       </AnimatePresence>
