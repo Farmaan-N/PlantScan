@@ -24,12 +24,14 @@ function ScannerPage() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-12">
-      {/* Header */}
-      <SectionHeader
-        badge="AI Scanner"
-        title={<>Identify <span className="text-gradient">Plant</span></>}
-        subtitle="Use our AI scanner to find out exactly what plant you have in front of you."
-      />
+      {/* Header - Hidden in camera mode on mobile to save space */}
+      <div className={`${mode === 'camera' ? 'hidden sm:block' : ''}`}>
+        <SectionHeader
+          badge="AI Scanner"
+          title={<>Identify <span className="text-gradient">Plant</span></>}
+          subtitle="Use our AI scanner to find out exactly what plant you have in front of you."
+        />
+      </div>
 
       <AnimatePresence mode="wait">
         {isLoading ? (
@@ -84,7 +86,15 @@ function ScannerPage() {
                        <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-widest text-red-500/60 mb-0.5">Scanning Error</p>
                        <p className="text-sm font-bold leading-tight">{error}</p>
                     </div>
-                    <button onClick={clearError} className="p-2 hover:bg-white/5 rounded-xl transition-colors">
+                    <button 
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        clearError();
+                      }} 
+                      className="p-2 hover:bg-white/5 rounded-xl transition-colors relative z-50 cursor-pointer"
+                      title="Clear error"
+                    >
                       <X size={20} />
                     </button>
                   </div>
@@ -149,18 +159,20 @@ function ScannerPage() {
 
             {/* Active Mode View */}
             {mode === 'camera' && (
-              <div className="max-w-4xl mx-auto animate-fade-in space-y-6 sm:space-y-8">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 px-4">
-                    <button onClick={() => setMode(null)} className="flex items-center gap-3 text-slate-500 hover:text-white text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em] transition-all group">
-                     <ChevronLeft size={16} className="group-hover:-translate-x-1 transition-transform" /> BACK TO SCANNER
+              <div className="max-w-4xl mx-auto animate-fade-in space-y-4 sm:space-y-8">
+                <div className="flex flex-row items-center justify-between gap-4 px-4 sm:px-0">
+                    <button onClick={() => setMode(null)} className="flex items-center gap-2 text-slate-500 hover:text-white text-[8px] sm:text-[10px] font-black uppercase tracking-[0.3em] transition-all group">
+                     <ChevronLeft size={14} className="group-hover:-translate-x-1 transition-transform sm:size-16" /> 
+                     <span className="hidden xs:inline">BACK TO SCANNER</span>
+                     <span className="xs:hidden">BACK</span>
                    </button>
-                  <div className="flex items-center gap-3 px-4 py-2 bg-red-500/5 border border-red-500/10 rounded-full w-fit">
-                    <div className="w-2 h-2 rounded-full bg-red-500 animate-pulse" />
-                    <span className="text-[9px] font-black uppercase tracking-[0.2em] text-red-500">Live Lens Active</span>
+                  <div className="flex items-center gap-2 px-3 py-1.5 sm:px-4 sm:py-2 bg-red-500/5 border border-red-500/10 rounded-full w-fit">
+                    <div className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse" />
+                    <span className="text-[8px] sm:text-[9px] font-black uppercase tracking-[0.2em] text-red-500">Live Lens Active</span>
                   </div>
                 </div>
-                <div className="rounded-[2.5rem] sm:rounded-[4rem] overflow-hidden border border-white/10 glass-card p-1.5 sm:p-2">
-                  <div className="rounded-[2rem] sm:rounded-[3.5rem] overflow-hidden bg-black aspect-video sm:aspect-video relative">
+                <div className="rounded-2xl sm:rounded-[4rem] overflow-hidden border border-white/10 glass-card p-0.5 sm:p-2 shadow-2xl">
+                  <div className="rounded-xl sm:rounded-[3.5rem] overflow-hidden bg-black relative">
                     <CameraCapture onCapture={handleCameraCapture} onClose={() => setMode(null)} />
                   </div>
                 </div>
@@ -188,17 +200,25 @@ function ScannerPage() {
             {selectedFile && mode === null && (
               <motion.div initial={{ opacity: 0, y: 30 }} animate={{ opacity: 1, y: 0 }}>
                 <GlassCard className="p-8 sm:p-12 max-w-2xl mx-auto rounded-[2.5rem] sm:rounded-[3.5rem] relative overflow-hidden">
-                  <div className="absolute top-0 right-0 w-48 h-48 bg-lime-500/5 -mr-24 -mt-24 rounded-full blur-3xl opacity-50" />
+                  <div className="absolute top-0 right-0 w-48 h-48 bg-lime-500/5 -mr-24 -mt-24 rounded-full blur-3xl opacity-50 pointer-events-none" />
 
                   <div className="flex items-center justify-between mb-8 sm:mb-12">
                         <div className="space-y-1">
                            <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em] text-lime-400">Image Ready</p>
                            <h3 className="text-2xl sm:text-3xl font-black uppercase tracking-tighter">Confirm Photo</h3>
                         </div>
-                    <button onClick={() => setSelectedFile(null)} className="w-10 h-10 sm:w-12 sm:h-12 bg-white/5 rounded-xl sm:rounded-2xl flex items-center justify-center text-slate-400 hover:text-white transition-colors border border-white/10">
-                      <X size={20} className="sm:size-24" />
-                    </button>
-                  </div>
+                         <button 
+                           type="button"
+                           onClick={(e) => {
+                             e.stopPropagation();
+                             setSelectedFile(null);
+                           }} 
+                           className="w-10 h-10 sm:w-12 sm:h-12 bg-white/5 rounded-xl sm:rounded-2xl flex items-center justify-center text-slate-400 hover:text-white transition-all border border-white/10 relative z-50 cursor-pointer active:scale-90"
+                           title="Discard photo"
+                         >
+                           <X size={20} className="sm:w-6 sm:h-6" />
+                         </button>
+                       </div>
 
                   <div className="p-4 sm:p-6 bg-white/[0.03] rounded-2xl sm:rounded-3xl border border-white/10 flex items-center gap-4 sm:gap-8 mb-8 sm:mb-12 group hover:bg-white/[0.05] transition-colors overflow-hidden">
                     <div className="w-14 h-14 sm:w-20 sm:h-20 bg-lime-500 rounded-xl sm:rounded-2xl flex items-center justify-center shadow-2xl shadow-lime-500/20 shrink-0">
@@ -218,8 +238,8 @@ function ScannerPage() {
               </motion.div>
             )}
 
-            {/* Tactical Grid Overlay on the bottom */}
-            <div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 pt-6 sm:pt-12">
+            {/* Tactical Grid Overlay on the bottom - Only shown when not in active camera mode on small devices */}
+            <div className={`max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8 pt-6 sm:pt-12 ${mode === 'camera' ? 'hidden sm:grid' : 'grid'}`}>
               <div className="md:col-span-2 space-y-6">
                 <div className="flex items-center gap-4">
                       <div className="h-[1px] flex-1 bg-white/5" />

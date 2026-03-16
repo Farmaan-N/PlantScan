@@ -48,10 +48,12 @@ function ImageUpload({ onUpload }) {
               <img src={preview.url} alt="Sample" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" />
               <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 to-transparent" />
               <button
+                type="button"
                 onClick={clearPreview}
-                className="absolute top-4 right-4 p-2 bg-black/60 backdrop-blur-md rounded-xl text-white hover:bg-red-500 transition-colors z-20"
+                className="absolute top-4 right-4 p-2.5 bg-black/60 backdrop-blur-md rounded-xl text-white hover:bg-red-500 transition-all z-50 cursor-pointer active:scale-90 border border-white/10"
+                title="Discard image"
               >
-                <X size={18} />
+                <X size={18} className="sm:w-5 sm:h-5" />
               </button>
               <div className="absolute bottom-6 left-6 z-20">
                  <div className="flex items-center gap-2 px-3 py-1 bg-lime-500 rounded-full text-slate-950 text-[10px] font-black uppercase tracking-widest">

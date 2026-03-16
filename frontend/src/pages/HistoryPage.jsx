@@ -139,16 +139,24 @@ function HistoryPage() {
               />
 
               {filteredScans.length > visibleCount && (
-                <div className="flex justify-center pt-8">
+                <div className="flex justify-center pt-8 sm:pt-12 px-4 pb-12 sm:pb-0">
                   <button
                     onClick={() => setVisibleCount(prev => prev + 3)}
-                    className="group relative px-10 py-5 bg-white/5 border border-white/10 rounded-2xl text-white font-black text-xs uppercase tracking-[0.3em] overflow-hidden transition-all hover:bg-white/10 hover:border-lime-500/30 active:scale-95"
+                    className="group relative w-full sm:w-auto px-6 sm:px-12 py-4 sm:py-6 bg-white/5 border border-white/10 rounded-2xl text-white font-black text-[10px] sm:text-xs uppercase tracking-[0.2em] sm:tracking-[0.4em] overflow-hidden transition-all hover:bg-white/10 hover:border-lime-500/30 active:scale-95 shadow-2xl"
                   >
-                    <div className="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-lime-500/50 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
-                    <div className="flex items-center gap-4">
-                      <RefreshCw size={16} className="text-lime-500 group-hover:rotate-180 transition-transform duration-700" />
-                      LOAD MORE PLANTS DATA
-                      <span className="text-slate-500 text-[10px] ml-2">[{filteredScans.length - visibleCount} REMAINING]</span>
+                    <div className="absolute top-0 left-0 w-full h-[px] bg-gradient-to-r from-transparent via-lime-500/50 to-transparent translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-1000" />
+                    <div className="flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 relative z-10">
+                      <div className="flex items-center gap-3">
+                        <RefreshCw size={14} className="text-lime-500 group-hover:rotate-180 transition-transform duration-700" />
+                        <span className="whitespace-nowrap">LOAD MORE</span>
+                        <span className="sm:hidden">PLANTS</span>
+                      </div>
+                      <span className="hidden sm:inline whitespace-nowrap">PLANTS DATA CATALOG</span>
+                      <div className="flex items-center gap-2 px-3 py-1 bg-white/5 rounded-full border border-white/5 group-hover:border-lime-500/20 transition-colors">
+                        <span className="text-slate-500 text-[8px] sm:text-[9px] font-black uppercase tracking-widest leading-none">
+                          {filteredScans.length - visibleCount} REMAINING
+                        </span>
+                      </div>
                     </div>
                   </button>
                 </div>
@@ -169,10 +177,10 @@ function HistoryPage() {
       </div>
 
       {/* Scroll to Top Reveal (Deco only) */}
-      <div className="pt-20 border-t border-white/5 flex items-center justify-center gap-4">
-        <div className="h-[1px] w-20 bg-gradient-to-r from-transparent to-white/10" />
-        <p className="text-[10px] font-black uppercase tracking-[0.4em] text-slate-600">End of History</p>
-        <div className="h-[1px] w-20 bg-gradient-to-l from-transparent to-white/10" />
+      <div className="pt-20 pb-24 sm:pb-12 border-t border-white/5 flex items-center justify-center gap-4">
+        <div className="h-[1px] w-12 sm:w-20 bg-gradient-to-r from-transparent to-white/10" />
+        <p className="text-[9px] sm:text-[10px] font-black uppercase tracking-[0.3em] sm:tracking-[0.4em] text-slate-600">End of History</p>
+        <div className="h-[1px] w-12 sm:w-20 bg-gradient-to-l from-transparent to-white/10" />
       </div>
     </div>
   );
