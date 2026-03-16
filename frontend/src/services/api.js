@@ -7,7 +7,7 @@ import { supabase } from '../lib/supabase';
  * Automatically prefixes all requests with /api.
  */
 const api = axios.create({
-  baseURL: '/api',  // Vite proxy routes this to http://localhost:3001
+  baseURL: import.meta.env.VITE_API_URL || '/api',
   timeout: 60000,   // 60 second timeout (LLM can be slow)
   headers: {
     'Content-Type': 'application/json',
